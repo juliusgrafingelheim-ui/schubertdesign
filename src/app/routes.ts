@@ -7,6 +7,8 @@ import { Showroom } from "./components/pages/Showroom";
 import { Marken } from "./components/pages/Marken";
 import { Unternehmen } from "./components/pages/Unternehmen";
 import { Kontakt } from "./components/pages/Kontakt";
+import { Impressum } from "./components/pages/Impressum";
+import { Datenschutz } from "./components/pages/Datenschutz";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +22,8 @@ export const router = createBrowserRouter([
       { path: "marken", Component: Marken },
       { path: "unternehmen", Component: Unternehmen },
       { path: "kontakt", Component: Kontakt },
+      { path: "impressum", Component: Impressum },
+      { path: "datenschutz", Component: Datenschutz },
       { path: "*", Component: Home },
     ],
   },

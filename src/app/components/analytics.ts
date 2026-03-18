@@ -7,7 +7,7 @@
  */
 
 const GA_MEASUREMENT_ID = "G-YPBWYFCNYX";
-const COOKIE_CONSENT_KEY = "ms-cookie-consent";
+const COOKIE_CONSENT_KEY = "sd-cookie-consent-v1";
 
 // Type-safe gtag helper
 function gtag(...args: any[]) {

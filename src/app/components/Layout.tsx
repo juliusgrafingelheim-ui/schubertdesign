@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Phone, ArrowUp } from "lucide-react";
+import { CookieBanner } from "./CookieBanner";
+import { LanguageProvider } from "./LanguageContext";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -34,6 +36,7 @@ export function Layout() {
     `relative py-1 transition-colors duration-200 ${isActive ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-900"}`;
 
   return (
+    <LanguageProvider>
     <div style={{ fontFamily: sans }} className="min-h-screen bg-white text-neutral-900">
       {/* ─── NAVBAR ─── */}
       <header
@@ -164,8 +167,8 @@ export function Layout() {
           <div className="border-t border-white/5 py-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-neutral-600" style={{ fontSize: "0.7rem" }}>
             <span>&copy; {new Date().getFullYear()} Schubert GmbH & Co. KG</span>
             <div className="flex gap-5">
-              <span className="hover:text-white transition-colors cursor-pointer">Datenschutz</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Impressum</span>
+              <Link to="/datenschutz" className="hover:text-white transition-colors">Datenschutz</Link>
+              <Link to="/impressum" className="hover:text-white transition-colors">Impressum</Link>
               <span className="hover:text-white transition-colors cursor-pointer">AGB</span>
             </div>
           </div>
@@ -185,6 +188,8 @@ export function Layout() {
           </motion.button>
         )}
       </AnimatePresence>
+      <CookieBanner />
     </div>
+    </LanguageProvider>
   );
 }

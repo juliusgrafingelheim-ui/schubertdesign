@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { useLanguage } from "./LanguageContext";
-import { Cookie, X } from "lucide-react";
+import { X } from "lucide-react";
 import { updateGoogleConsent } from "./analytics";
 
-const COOKIE_CONSENT_KEY = "ms-cookie-consent";
+const COOKIE_CONSENT_KEY = "sd-cookie-consent-v1";
 
 type ConsentState = {
   necessary: boolean;
@@ -14,8 +13,9 @@ type ConsentState = {
   timestamp: string;
 };
 
+const serif = "'Lora', Georgia, serif";
+
 export function CookieBanner() {
-  const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [preferences, setPreferences] = useState({
@@ -27,8 +27,7 @@ export function CookieBanner() {
   useEffect(() => {
     const stored = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!stored) {
-      // Small delay so it doesn't flash on first paint
-      const timer = setTimeout(() => setVisible(true), 1200);
+      const timer = setTimeout(() => setVisible(true), 800);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -39,117 +38,60 @@ export function CookieBanner() {
     setVisible(false);
   };
 
-  const acceptAll = () => {
-    saveConsent({
-      necessary: true,
-      analytics: true,
-      marketing: true,
-      timestamp: new Date().toISOString(),
-    });
-  };
+  const acceptAll = () =>
+    saveConsent({ necessary: true, analytics: true, marketing: true, timestamp: new Date().toISOString() });
 
-  const acceptSelected = () => {
-    saveConsent({
-      ...preferences,
-      necessary: true,
-      timestamp: new Date().toISOString(),
-    });
-  };
+  const acceptSelected = () =>
+    saveConsent({ ...preferences, necessary: true, timestamp: new Date().toISOString() });
 
-  const acceptNecessary = () => {
-    saveConsent({
-      necessary: true,
-      analytics: false,
-      marketing: false,
-      timestamp: new Date().toISOString(),
-    });
-  };
+  const acceptNecessary = () =>
+    saveConsent({ necessary: true, analytics: false, marketing: false, timestamp: new Date().toISOString() });
 
-  const t = lang === "de"
-    ? {
-        title: "Cookie-Einstellungen",
-        text: "Wir verwenden Cookies, um Ihnen die bestmögliche Erfahrung auf unserer Website zu bieten. Einige Cookies sind technisch notwendig, andere helfen uns, die Website zu verbessern.",
-        acceptAll: "Alle akzeptieren",
-        acceptSelected: "Auswahl bestätigen",
-        rejectAll: "Nur notwendige",
-        settings: "Einstellungen",
-        necessary: "Notwendig",
-        necessaryDesc: "Diese Cookies sind technisch erforderlich und können nicht deaktiviert werden.",
-        analytics: "Analyse",
-        analyticsDesc: "Helfen uns zu verstehen, wie Besucher unsere Website nutzen.",
-        marketing: "Marketing",
-        marketingDesc: "Ermöglichen personalisierte Werbung und Inhalte.",
-        moreInfo: "Mehr in unserer",
-        privacy: "Datenschutzerklärung",
-      }
-    : {
-        title: "Cookie Settings",
-        text: "We use cookies to provide you with the best possible experience on our website. Some cookies are technically necessary, others help us improve the website.",
-        acceptAll: "Accept all",
-        acceptSelected: "Confirm selection",
-        rejectAll: "Necessary only",
-        settings: "Settings",
-        necessary: "Necessary",
-        necessaryDesc: "These cookies are technically required and cannot be disabled.",
-        analytics: "Analytics",
-        analyticsDesc: "Help us understand how visitors use our website.",
-        marketing: "Marketing",
-        marketingDesc: "Enable personalized advertising and content.",
-        moreInfo: "More in our",
-        privacy: "Privacy Policy",
-      };
+  const toggles = [
+    { key: "necessary" as const, label: "Notwendig", desc: "Technisch erforderlich – kann nicht deaktiviert werden.", locked: true },
+    { key: "analytics" as const, label: "Analyse", desc: "Hilft uns zu verstehen, wie Besucher unsere Website nutzen.", locked: false },
+    { key: "marketing" as const, label: "Marketing", desc: "Ermöglicht personalisierte Werbung und Inhalte.", locked: false },
+  ];
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 40 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-0 left-0 right-0 z-[9998] p-4 md:p-6"
+          exit={{ opacity: 0, y: 60 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed bottom-0 left-0 right-0 z-[9999] p-4 md:p-6"
         >
-          <div className="max-w-2xl mx-auto bg-white border border-black/10 shadow-2xl shadow-black/10">
+          <div className="max-w-xl mx-auto bg-neutral-950 text-white shadow-2xl">
             <div className="p-6 md:p-8">
               {/* Header */}
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <Cookie size={20} className="text-black/40 shrink-0" />
-                  <h3
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: "1.3rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {t.title}
-                  </h3>
-                </div>
+              <div className="flex items-start justify-between gap-4 mb-5">
+                <h3 style={{ fontFamily: serif, fontSize: "1.15rem", fontWeight: 400, fontStyle: "italic" }}>
+                  Cookie-Einstellungen
+                </h3>
                 <button
                   onClick={acceptNecessary}
-                  className="text-black/30 hover:text-black transition-colors bg-transparent border-none cursor-pointer p-1 shrink-0"
-                  aria-label="Close"
+                  className="text-white/30 hover:text-white transition-colors cursor-pointer shrink-0 p-1"
+                  aria-label="Schließen"
                 >
-                  <X size={18} />
+                  <X size={16} />
                 </button>
               </div>
 
               {/* Text */}
-              <p
-                className="text-black/55 text-[0.82rem] mb-5"
-                style={{ lineHeight: 1.7, fontWeight: 300 }}
-              >
-                {t.text}{" "}
+              <p className="text-white/50 mb-6" style={{ fontSize: "0.8rem", lineHeight: 1.7 }}>
+                Wir verwenden Cookies, um Ihnen die bestmögliche Erfahrung zu bieten.{" "}
                 <Link
                   to="/datenschutz"
-                  className="text-black/70 underline hover:text-black transition-colors"
+                  className="text-white/70 underline underline-offset-2 hover:text-white transition-colors"
                   onClick={() => setVisible(false)}
                 >
-                  {t.moreInfo} {t.privacy}
+                  Datenschutzerklärung
                 </Link>
               </p>
 
-              {/* Details toggle */}
+              {/* Detail toggles */}
               <AnimatePresence>
                 {showDetails && (
                   <motion.div
@@ -159,101 +101,80 @@ export function CookieBanner() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="border-t border-black/10 pt-5 mb-5 space-y-4">
-                      {/* Necessary */}
-                      <label className="flex items-start gap-3 cursor-not-allowed">
-                        <input
-                          type="checkbox"
-                          checked={true}
-                          disabled
-                          className="mt-1 accent-black"
-                        />
-                        <div>
-                          <p className="text-[0.82rem] text-black/80" style={{ fontWeight: 500 }}>
-                            {t.necessary}
-                          </p>
-                          <p className="text-[0.75rem] text-black/40" style={{ fontWeight: 300 }}>
-                            {t.necessaryDesc}
-                          </p>
-                        </div>
-                      </label>
-
-                      {/* Analytics */}
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={preferences.analytics}
-                          onChange={(e) =>
-                            setPreferences((p) => ({ ...p, analytics: e.target.checked }))
-                          }
-                          className="mt-1 accent-black cursor-pointer"
-                        />
-                        <div>
-                          <p className="text-[0.82rem] text-black/80" style={{ fontWeight: 500 }}>
-                            {t.analytics}
-                          </p>
-                          <p className="text-[0.75rem] text-black/40" style={{ fontWeight: 300 }}>
-                            {t.analyticsDesc}
-                          </p>
-                        </div>
-                      </label>
-
-                      {/* Marketing */}
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={preferences.marketing}
-                          onChange={(e) =>
-                            setPreferences((p) => ({ ...p, marketing: e.target.checked }))
-                          }
-                          className="mt-1 accent-black cursor-pointer"
-                        />
-                        <div>
-                          <p className="text-[0.82rem] text-black/80" style={{ fontWeight: 500 }}>
-                            {t.marketing}
-                          </p>
-                          <p className="text-[0.75rem] text-black/40" style={{ fontWeight: 300 }}>
-                            {t.marketingDesc}
-                          </p>
-                        </div>
-                      </label>
+                    <div className="border-t border-white/10 pt-5 mb-6 space-y-4">
+                      {toggles.map((t) => (
+                        <label
+                          key={t.key}
+                          className={`flex items-start gap-3 ${t.locked ? "cursor-not-allowed" : "cursor-pointer"}`}
+                        >
+                          <div className="mt-0.5 shrink-0">
+                            <div
+                              onClick={() => {
+                                if (!t.locked)
+                                  setPreferences((p) => ({ ...p, [t.key]: !p[t.key] }));
+                              }}
+                              className={`w-8 h-[18px] border transition-all flex items-center ${
+                                t.locked || preferences[t.key]
+                                  ? "bg-white border-white"
+                                  : "bg-transparent border-white/30 hover:border-white/50"
+                              }`}
+                            >
+                              <div
+                                className={`w-3 h-3 transition-all ${
+                                  t.locked || preferences[t.key]
+                                    ? "bg-neutral-950 ml-[13px]"
+                                    : "bg-white/30 ml-[2px]"
+                                }`}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-white/90" style={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                              {t.label}
+                            </p>
+                            <p className="text-white/35" style={{ fontSize: "0.72rem" }}>
+                              {t.desc}
+                            </p>
+                          </div>
+                        </label>
+                      ))}
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
               {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={acceptAll}
-                  className="flex-1 bg-black text-white py-3 px-6 text-[0.78rem] tracking-[0.1em] uppercase cursor-pointer border border-black hover:bg-black/85 transition-all"
-                  style={{ fontWeight: 400 }}
+                  className="flex-1 bg-white text-neutral-950 py-2.5 px-5 cursor-pointer border border-white hover:bg-white/90 transition-all"
+                  style={{ fontSize: "0.72rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
-                  {t.acceptAll}
+                  Alle akzeptieren
                 </button>
                 {showDetails ? (
                   <button
                     onClick={acceptSelected}
-                    className="flex-1 bg-transparent text-black py-3 px-6 text-[0.78rem] tracking-[0.1em] uppercase cursor-pointer border border-black/20 hover:border-black transition-all"
-                    style={{ fontWeight: 400 }}
+                    className="flex-1 bg-transparent text-white py-2.5 px-5 cursor-pointer border border-white/20 hover:border-white/50 transition-all"
+                    style={{ fontSize: "0.72rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
-                    {t.acceptSelected}
+                    Auswahl bestätigen
                   </button>
                 ) : (
                   <button
                     onClick={() => setShowDetails(true)}
-                    className="flex-1 bg-transparent text-black py-3 px-6 text-[0.78rem] tracking-[0.1em] uppercase cursor-pointer border border-black/20 hover:border-black transition-all"
-                    style={{ fontWeight: 400 }}
+                    className="flex-1 bg-transparent text-white py-2.5 px-5 cursor-pointer border border-white/20 hover:border-white/50 transition-all"
+                    style={{ fontSize: "0.72rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
-                    {t.settings}
+                    Einstellungen
                   </button>
                 )}
                 <button
                   onClick={acceptNecessary}
-                  className="flex-1 bg-transparent text-black/50 py-3 px-6 text-[0.78rem] tracking-[0.1em] uppercase cursor-pointer border border-black/10 hover:border-black/30 transition-all"
-                  style={{ fontWeight: 400 }}
+                  className="flex-1 bg-transparent text-white/40 py-2.5 px-5 cursor-pointer border border-white/10 hover:border-white/25 hover:text-white/60 transition-all"
+                  style={{ fontSize: "0.72rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
-                  {t.rejectAll}
+                  Nur notwendige
                 </button>
               </div>
             </div>
