@@ -1,185 +1,167 @@
 import { Helmet } from "react-helmet-async";
 
-/** LocalBusiness + Photographer JSON-LD for AI/Search engine optimization */
+/** LocalBusiness JSON-LD for Schubert Design Steinmetzbetrieb */
 export function StructuredData() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["LocalBusiness", "Photographer", "ProfessionalService"],
-        "@id": "https://www.marioschubert.com/#business",
-        name: "Mario Schubert Fotografie",
-        alternateName: "Mario Schubert Photography",
+        "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+        "@id": "https://schubertdesign.de/#business",
+        name: "Schubert Design",
+        alternateName: "Schubert Design Steinmetzbetrieb",
         description:
-          "Professioneller Hochzeitsfotograf und Videograf in Innsbruck, Tirol. Spezialisiert auf zeitlose Hochzeitsreportagen, Tierfotografie, Couple Shootings und Familienfotos. Aktiv in Tirol, Bayern, München und den Alpen.",
-        url: "https://www.marioschubert.com",
-        logo: "https://ik.imagekit.io/r2yqrg6np/68e54b92f722d45170d60f24_Logo%20MS.svg",
-        image: "https://www.marioschubert.com/og-image.jpg",
-        telephone: "+43015155338029",
-        email: "servus@marioschub.com",
+          "Steinmetzbetrieb in Ingolstadt, spezialisiert auf exklusive Bäder, Naturstein und Fliesen. Seit 1953 in dritter Generation. 400m² Showroom mit Marken wie Villeroy & Boch, Dornbracht und Agape.",
+        url: "https://schubertdesign.de",
+        telephone: "+49841-88560",
+        email: "info@schubertdesign.de",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "Bäckerbühelgasse 14",
-          addressLocality: "Innsbruck",
-          postalCode: "6020",
-          addressRegion: "Tirol",
-          addressCountry: "AT",
+          streetAddress: "Schrobenhausener Str. 132",
+          addressLocality: "Ingolstadt",
+          postalCode: "85051",
+          addressRegion: "Bayern",
+          addressCountry: "DE",
         },
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 47.2692,
-          longitude: 11.4041,
+          latitude: 48.757,
+          longitude: 11.4254,
         },
         areaServed: [
-          {
-            "@type": "State",
-            name: "Tirol",
-            containedInPlace: { "@type": "Country", name: "Austria" },
-          },
           {
             "@type": "State",
             name: "Bayern",
             containedInPlace: { "@type": "Country", name: "Germany" },
           },
-          { "@type": "City", name: "Innsbruck" },
+          { "@type": "City", name: "Ingolstadt" },
           { "@type": "City", name: "München" },
-          { "@type": "City", name: "Salzburg" },
-          { "@type": "City", name: "Garmisch-Partenkirchen" },
-          { "@type": "City", name: "Kitzbühel" },
+          { "@type": "City", name: "Neuburg an der Donau" },
+          { "@type": "City", name: "Pfaffenhofen" },
+          { "@type": "City", name: "Eichstätt" },
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: "Fotografie & Videografie Dienstleistungen",
+          name: "Leistungen",
           itemListElement: [
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Hochzeitsfotografie",
+                name: "Badgestaltung",
                 description:
-                  "Zeitlose, authentische Hochzeitsreportagen. Dokumentarischer Stil, cineastische Bearbeitung. Pakete ab 890€.",
+                  "Komplette Badplanung und -umsetzung mit hochwertigen Natursteinen, Fliesen und Sanitärobjekten. Von der Beratung bis zur Fertigstellung.",
               },
             },
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Hochzeitsvideografie",
+                name: "Natursteinarbeiten",
                 description:
-                  "Emotionale Hochzeitsfilme in Full-HD und 4K. Highlight-Videos und Langfassungen. Pakete ab 1.000€.",
+                  "Verarbeitung und Montage von Naturstein für Innen- und Außenbereiche. Küchenarbeitsplatten, Fensterbänke, Treppen und Fassaden.",
               },
             },
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Tierfotografie",
+                name: "Fliesenarbeiten",
                 description:
-                  "Professionelle Tier- und Haustierfotografie. Hunde, Pferde, Katzen. Studio ab 190€, Outdoor ab 260€.",
+                  "Professionelle Fliesenverlegung für Bäder, Küchen, Wohn- und Außenbereiche. Großformate, Mosaike und Sonderformate.",
               },
             },
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "Service",
-                name: "Couple Shooting / Paarshooting",
+                name: "Steinrestaurierung",
                 description:
-                  "Authentische Paarfotos für Verlobungen, Jahrestage oder einfach so. Natürlich und ungezwungen.",
-              },
-            },
-            {
-              "@type": "Offer",
-              itemOffered: {
-                "@type": "Service",
-                name: "Familienfotografie & Taufe",
-                description:
-                  "Familienmomente festgehalten: Familienportraits, Taufen, Babyshootings und besondere Anlässe.",
+                  "Restaurierung und Sanierung von Natursteinflächen, Denkmalpflege und Grabmale.",
               },
             },
           ],
         },
-        priceRange: "€€",
+        priceRange: "€€€",
         currenciesAccepted: "EUR",
-        paymentAccepted: "Cash, Bank Transfer",
-        openingHoursSpecification: {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ],
-          opens: "08:00",
-          closes: "20:00",
-        },
-        sameAs: [
-          "https://www.instagram.com/marioschubert",
+        paymentAccepted: "Cash, Bank Transfer, EC Card",
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "18:00",
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: "Saturday",
+            opens: "09:00",
+            closes: "13:00",
+          },
         ],
-        knowsLanguage: ["de", "en"],
-        founder: {
-          "@type": "Person",
-          name: "Mario Schubert",
-          jobTitle: "Fotograf & Videograf",
-          knowsAbout: [
-            "Hochzeitsfotografie",
-            "Hochzeitsvideografie",
-            "Tierfotografie",
-            "Hundefotografie",
-            "Pferdefotografie",
-            "Portraitfotografie",
-            "Couple Shooting",
-            "Familienfotografie",
-          ],
-        },
+        sameAs: [
+          "https://www.instagram.com/schubertdesign",
+        ],
+        knowsLanguage: ["de"],
+        founder: [
+          {
+            "@type": "Person",
+            name: "Raphael Schubert",
+            jobTitle: "Geschäftsführer",
+          },
+          {
+            "@type": "Person",
+            name: "Henry Schubert",
+            jobTitle: "Geschäftsführer",
+          },
+        ],
+        foundingDate: "1953",
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.marioschubert.com/#website",
-        url: "https://www.marioschubert.com",
-        name: "Mario Schubert Photography",
+        "@id": "https://schubertdesign.de/#website",
+        url: "https://schubertdesign.de",
+        name: "Schubert Design",
         description:
-          "Hochzeitsfotograf & Videograf in Innsbruck, Tirol. Zeitlose Hochzeitsreportagen, Tierfotografie, Portraits und mehr.",
+          "Steinmetzbetrieb in Ingolstadt. Spezialisiert auf exklusive Bäder, Naturstein und Fliesen seit 1953.",
         publisher: {
-          "@id": "https://www.marioschubert.com/#business",
+          "@id": "https://schubertdesign.de/#business",
         },
-        inLanguage: ["de-AT", "en"],
+        inLanguage: "de-DE",
       },
       {
         "@type": "FAQPage",
         mainEntity: [
           {
             "@type": "Question",
-            name: "Wo ist Mario Schubert als Hochzeitsfotograf verfügbar?",
+            name: "Was bietet Schubert Design an?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Mario Schubert ist hauptsächlich in Innsbruck, Tirol und Bayern (München, Garmisch) tätig. Innerhalb von 20 km um Innsbruck fallen keine Anfahrtskosten an. Darüber hinaus berechnet er 60ct/km. Destination Weddings weltweit auf Anfrage.",
+              text: "Schubert Design ist ein Steinmetzbetrieb in Ingolstadt, spezialisiert auf drei Bereiche: BAD (komplette Badgestaltung), NATURSTEIN (Verarbeitung und Montage) und FLIESE (professionelle Verlegung). Seit 1953 in dritter Generation.",
             },
           },
           {
             "@type": "Question",
-            name: "Was kostet ein Hochzeitsfotograf in Innsbruck?",
+            name: "Wo ist der Schubert Design Showroom?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Hochzeitsfotografie-Pakete bei Mario Schubert starten ab 890€ (Standesamt, 3h) bis zu 3.190€ (Signature Plus+ mit 8h Begleitung, 600+ Bildern und Minivideo). Individuelle Angebote auf Anfrage.",
+              text: "Der 400m² große Showroom befindet sich in der Schrobenhausener Str. 132, 85051 Ingolstadt. Hier können Sie Natursteine, Fliesen und komplette Badwelten erleben. Geöffnet Mo–Fr 08–18 Uhr, Sa 09–13 Uhr.",
             },
           },
           {
             "@type": "Question",
-            name: "Bietet Mario Schubert auch Tierfotografie an?",
+            name: "Welche Marken führt Schubert Design?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Ja! Tierfotografie im Tageslichtstudio ab 190€ (10 Bilder) oder Outdoor ab 260€ (20 Bilder). Hunde, Pferde, Katzen und weitere Tiere. Kombi-Angebote mit Besitzer möglich.",
+              text: "Schubert Design arbeitet mit Premium-Marken wie Villeroy & Boch, Dornbracht, Agape, Marazzi, Florim und vielen weiteren führenden Herstellern im Bereich Bad, Naturstein und Fliesen.",
             },
           },
           {
             "@type": "Question",
-            name: "Wie ist der Stil von Mario Schubert?",
+            name: "Seit wann gibt es Schubert Design?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Natürlich, cineastisch und zeitlos. Mario arbeitet dokumentarisch – keine gestellten Posen, sondern echte Momente. Die Bearbeitung hat einen Editorial-Look mit filmischem Touch.",
+              text: "Schubert Design wurde 1953 gegründet und wird heute in dritter Generation von Raphael und Henry Schubert geführt. Der Betrieb verbindet traditionelles Steinmetz-Handwerk mit modernem Design.",
             },
           },
         ],
