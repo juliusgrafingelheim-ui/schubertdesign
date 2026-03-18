@@ -1,113 +1,161 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import nodemailer from "nodemailer";
 
-// ── CORS Headers ──
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const LOGO_URL = "https://cdn.prod.website-files.com/618ac216f0fe430bdd7d4310/618ac4ef655edfae991f06b2_Group%20108.png";
 
-// ── Build package summary HTML for emails ──
-function buildPackageSummaryHtml(
-  selectedPackages: { name: string; price: string }[] | undefined,
-  selectedAddons: string[] | undefined,
-  estimatedTotal: string | undefined,
-  style: "mario" | "customer"
-): string {
-  const hasPkgs = selectedPackages && selectedPackages.length > 0;
-  const hasAddons = selectedAddons && selectedAddons.length > 0;
-  if (!hasPkgs && !hasAddons) return "";
+// ── Schubert Design – Notification to Team ──
+function buildNotificationHtml(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff">
+    <!-- Header -->
+    <div style="background:#0a0a0a;padding:32px 40px;text-align:center">
+      <img src="${LOGO_URL}" alt="Schubert Design" style="height:32px;filter:invert(1)" />
+    </div>
+    <!-- Content -->
+    <div style="padding:40px">
+      <p style="margin:0;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#999;font-weight:600">Neue Anfrage</p>
+      <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:26px;color:#111;margin:12px 0 28px">
+        ${data.firstName} ${data.lastName}
+      </h1>
 
-  const borderColor = style === "mario" ? "#333" : "#333";
-  const bgColor = style === "mario" ? "#f8f7f5" : "#f8f7f5";
-
-  let html = `
-    <div style="background:${bgColor};border-left:3px solid ${borderColor};padding:20px;margin:20px 0">
-      <p style="margin:0 0 12px;font-weight:600;font-size:14px;color:#333;text-transform:uppercase;letter-spacing:1px">
-        ${style === "mario" ? "Paketauswahl" : "Eure Auswahl"}
-      </p>
-      <table style="border-collapse:collapse;width:100%">
-  `;
-
-  if (hasPkgs) {
-    for (const pkg of selectedPackages!) {
-      html += `
+      <table style="width:100%;border-collapse:collapse">
         <tr>
-          <td style="padding:6px 0;font-size:14px;color:#555;border-bottom:1px solid rgba(0,0,0,0.06)">${pkg.name}</td>
-          <td style="padding:6px 0;font-size:14px;color:#333;text-align:right;font-weight:500;border-bottom:1px solid rgba(0,0,0,0.06);white-space:nowrap">${pkg.price}</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:600;width:120px;vertical-align:top">Name</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333">${data.firstName} ${data.lastName}</td>
         </tr>
-      `;
-    }
-  }
-
-  if (hasAddons) {
-    for (const addon of selectedAddons!) {
-      html += `
         <tr>
-          <td colspan="2" style="padding:5px 0;font-size:13px;color:#777;border-bottom:1px solid rgba(0,0,0,0.04)">+ ${addon}</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:600;vertical-align:top">E-Mail</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333"><a href="mailto:${data.email}" style="color:#333;text-decoration:underline">${data.email}</a></td>
         </tr>
-      `;
-    }
-  }
-
-  if (estimatedTotal) {
-    html += `
-      <tr>
-        <td style="padding:12px 0 4px;font-size:14px;font-weight:700;color:#111;border-top:2px solid rgba(0,0,0,0.1)">Geschätzter Gesamtpreis</td>
-        <td style="padding:12px 0 4px;font-size:18px;font-weight:700;color:#111;text-align:right;border-top:2px solid rgba(0,0,0,0.1);white-space:nowrap;font-family:Georgia,serif">${estimatedTotal}</td>
-      </tr>
-    `;
-  }
-
-  html += `
+        <tr>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:600;vertical-align:top">Betreff</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333">${data.subject}</td>
+        </tr>
       </table>
-      <p style="margin:10px 0 0;font-size:11px;color:#aaa;font-style:italic">
-        * Unverbindliche Schätzung. Der finale Preis wird individuell besprochen.
+
+      <div style="margin:28px 0 0;padding:20px;background:#fafafa;border-left:3px solid #0a0a0a">
+        <p style="margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:600">Nachricht</p>
+        <p style="margin:0;font-size:14px;color:#555;line-height:1.8;white-space:pre-wrap">${data.message}</p>
+      </div>
+
+      <div style="margin-top:32px">
+        <a href="mailto:${data.email}" style="display:inline-block;padding:12px 28px;background:#0a0a0a;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;text-decoration:none;font-weight:600">Direkt antworten</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:24px 40px;border-top:1px solid #f0f0f0;text-align:center">
+      <p style="margin:0;font-size:11px;color:#bbb">Diese Anfrage wurde über das Kontaktformular auf schubertdesign.de gesendet.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+// ── Schubert Design – Confirmation to Customer ──
+function buildConfirmationHtml(data: {
+  firstName: string;
+  subject: string;
+  message: string;
+}) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:'Helvetica Neue',Arial,sans-serif">
+  <div style="max-width:600px;margin:0 auto;background:#ffffff">
+    <!-- Header -->
+    <div style="background:#0a0a0a;padding:32px 40px;text-align:center">
+      <img src="${LOGO_URL}" alt="Schubert Design" style="height:32px;filter:invert(1)" />
+    </div>
+    <!-- Content -->
+    <div style="padding:40px">
+      <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:28px;color:#111;margin:0 0 8px">
+        Vielen Dank, ${data.firstName}!
+      </h1>
+      <p style="font-size:15px;color:#555;line-height:1.8;margin:16px 0 0">
+        Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen – in der Regel innerhalb von <strong style="color:#111">1–2 Werktagen</strong>.
+      </p>
+
+      <div style="margin:28px 0;padding:20px;background:#fafafa;border-left:3px solid #0a0a0a">
+        <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#999;font-weight:600">Ihre Anfrage</p>
+        <p style="margin:0;font-size:14px;color:#555;line-height:1.7">
+          <strong>Betreff:</strong> ${data.subject}<br/>
+          ${data.message ? `<strong>Nachricht:</strong> ${data.message.substring(0, 400)}${data.message.length > 400 ? "…" : ""}` : ""}
+        </p>
+      </div>
+
+      <p style="font-size:15px;color:#555;line-height:1.8">
+        In der Zwischenzeit können Sie gerne unseren <a href="https://schubertdesign.de/showroom" style="color:#111;text-decoration:underline">Showroom besuchen</a> oder uns direkt anrufen.
+      </p>
+
+      <div style="margin:28px 0 0;padding:20px;background:#fafafa">
+        <table style="width:100%">
+          <tr>
+            <td style="font-size:13px;color:#555;line-height:1.7">
+              <strong style="color:#111">Schubert Design</strong><br/>
+              Schrobenhausener Str. 132<br/>
+              85051 Ingolstadt<br/><br/>
+              <a href="tel:+4984197474-0" style="color:#333;text-decoration:none">+49 (0) 841 97474 0</a><br/>
+              <a href="mailto:schubert@schubertdesign.de" style="color:#333;text-decoration:none">schubert@schubertdesign.de</a>
+            </td>
+            <td style="vertical-align:top;text-align:right;font-size:13px;color:#555;line-height:1.7">
+              <strong style="color:#111">Showroom</strong><br/>
+              Di–Fr: 09–12:30 &amp; 14–17 Uhr<br/>
+              Sa: 10–15 Uhr<br/>
+              Mo: geschlossen
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <p style="font-size:15px;color:#555;line-height:1.8;margin-top:28px">
+        Mit besten Grüßen,<br/>
+        <strong style="color:#111">Ihr Schubert Design Team</strong>
       </p>
     </div>
-  `;
 
-  return html;
+    <!-- Footer -->
+    <div style="padding:24px 40px;border-top:1px solid #f0f0f0;text-align:center">
+      <p style="margin:0 0 4px;font-size:11px;color:#bbb">Schubert GmbH &amp; Co. KG · Bad · Naturstein · Fliese</p>
+      <p style="margin:0;font-size:11px;color:#bbb">Schrobenhausener Str. 132, 85051 Ingolstadt</p>
+    </div>
+  </div>
+</body>
+</html>`;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Handle preflight
   if (req.method === "OPTIONS") {
-    return res.status(200).setHeader("Access-Control-Allow-Origin", "*").end();
+    return res.status(200).setHeader("Access-Control-Allow-Origin", "*").setHeader("Access-Control-Allow-Methods", "POST, OPTIONS").setHeader("Access-Control-Allow-Headers", "Content-Type").end();
   }
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const {
-    name,
-    email,
-    phone,
-    foundVia,
-    interests,
-    date,
-    weddingGuide,
-    message,
-    selectedPackages,
-    selectedAddons,
-    estimatedTotal,
-    meetingDate,
-    meetingType,
-  } = req.body;
+  const { firstName, lastName, email, subject, message } = req.body;
 
-  if (!name || !email || !phone) {
-    return res.status(400).json({ error: "Name, email, and phone are required" });
+  if (!firstName || !lastName || !email || !message) {
+    return res.status(400).json({ error: "Alle Pflichtfelder müssen ausgefüllt sein." });
   }
 
-  // ── SMTP Transporter (IONOS) ──
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,        // smtp.ionos.de
-    port: Number(process.env.SMTP_PORT), // 587
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
     secure: false,
     auth: {
-      user: process.env.SMTP_USER,       // servus@marioschub.com
+      user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
     tls: {
@@ -116,99 +164,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
   });
 
-  const interestsText = (interests || []).join(", ") || "\u2013";
-  const firstName = name.split(" ")[0];
-  const packageSummaryMario = buildPackageSummaryHtml(selectedPackages, selectedAddons, estimatedTotal, "mario");
-  const packageSummaryCustomer = buildPackageSummaryHtml(selectedPackages, selectedAddons, estimatedTotal, "customer");
-  const hasPackageSelection = (selectedPackages && selectedPackages.length > 0) || (selectedAddons && selectedAddons.length > 0);
-
-  // ── Email to Mario ──
-  const mailToMario = {
-    from: `"Mario Schubert Photography" <${process.env.SMTP_USER}>`,
-    to: process.env.SMTP_USER,
-    replyTo: email,
-    subject: `Neue Anfrage von ${name} \u2013 ${interestsText}${estimatedTotal ? ` (\u2248 ${estimatedTotal})` : ""}`,
-    html: `
-      <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:650px;margin:0 auto;color:#333">
-        <h2 style="font-family:Georgia,serif;font-weight:300;font-size:24px;border-bottom:1px solid #eee;padding-bottom:16px">Neue Anfrage über die Website</h2>
-        <table style="border-collapse:collapse;width:100%;margin:20px 0">
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;width:180px;vertical-align:top">Name</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${name}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">E-Mail</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0"><a href="mailto:${email}" style="color:#333">${email}</a></td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Telefon</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${phone}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Gefunden über</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${foundVia || "\u2013"}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Interesse</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${interestsText}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Datum</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${date || "\u2013"}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Wedding Guide</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${weddingGuide ? "Ja, bitte zusenden" : "Nein"}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Termin</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${meetingDate || "\u2013"}</td></tr>
-          <tr><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;vertical-align:top">Terminart</td><td style="padding:10px 12px;border-bottom:1px solid #f0f0f0">${meetingType || "\u2013"}</td></tr>
-        </table>
-        ${packageSummaryMario}
-        <h3 style="font-family:Georgia,serif;font-weight:400;font-size:18px;margin-top:24px">Nachricht:</h3>
-        <div style="white-space:pre-wrap;background:#f8f7f5;padding:20px;border-left:3px solid #333;margin:12px 0;line-height:1.7;color:#555">${message || "\u2013 keine Nachricht \u2013"}</div>
-        <p style="color:#999;font-size:12px;margin-top:30px;border-top:1px solid #eee;padding-top:16px">Diese Anfrage wurde über das Kontaktformular auf marioschub.com gesendet.</p>
-      </div>
-    `,
-  };
-
-  // ── Confirmation email to customer ──
-  const packageInfo = hasPackageSelection
-    ? packageSummaryCustomer
-    : "";
-
-  const mailToCustomer = {
-    from: `"Mario Schubert Photography" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: "Danke für deine Anfrage! \u2013 Mario Schubert Photography",
-    html: `
-      <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;color:#333">
-        <div style="text-align:center;padding:40px 20px 30px;border-bottom:1px solid #eee">
-          <img src="https://ik.imagekit.io/r2yqrg6np/68e54b92f722d45170d60f24_Logo%20MS.svg" alt="Mario Schubert Photography" style="height:36px" />
-        </div>
-        <div style="padding:40px 24px">
-          <h1 style="font-family:Georgia,serif;font-weight:300;font-size:28px;margin-bottom:8px;color:#111">Servus ${firstName}!</h1>
-          <p style="line-height:1.8;color:#555;font-size:15px;margin-top:16px">
-            Vielen Dank für deine Anfrage! Ich habe deine Nachricht erhalten und melde mich so schnell wie möglich bei dir \u2013 in der Regel innerhalb von <strong>48 Stunden</strong>.
-          </p>
-          <p style="line-height:1.8;color:#555;font-size:15px">
-            Ich freue mich schon darauf, mehr über eure Pläne zu erfahren und gemeinsam etwas Besonderes zu schaffen.
-          </p>
-
-          ${packageInfo}
-
-          <div style="background:#f8f7f5;padding:20px;margin:28px 0;border-left:3px solid #333">
-            <p style="margin:0;color:#555;font-size:14px;line-height:1.6">
-              <strong>Eure Anfrage:</strong> ${interestsText}<br/>
-              ${date ? `<strong>Datum:</strong> ${date}<br/>` : ""}
-              ${message ? `<strong>Nachricht:</strong> ${message.substring(0, 300)}${message.length > 300 ? "..." : ""}` : ""}
-            </p>
-          </div>
-
-          <p style="line-height:1.8;color:#555;font-size:15px;margin-top:28px">
-            Bis bald!<br/>
-            <strong style="color:#111">Mario</strong>
-          </p>
-        </div>
-        <div style="text-align:center;padding:24px 20px;border-top:1px solid #eee;color:#aaa;font-size:12px;line-height:1.6">
-          <p style="margin:4px 0">Mario Schubert Fotografie</p>
-          <p style="margin:4px 0">Bäckerbühelgasse 14, 6020 Innsbruck</p>
-          <p style="margin:4px 0">servus@marioschub.com</p>
-        </div>
-      </div>
-    `,
-  };
+  const fromAddress = `"Schubert Design" <${process.env.SMTP_USER}>`;
 
   try {
     await Promise.all([
-      transporter.sendMail(mailToMario),
-      transporter.sendMail(mailToCustomer),
+      // Notification to Schubert
+      transporter.sendMail({
+        from: fromAddress,
+        to: "schubert@schubertdesign.de",
+        replyTo: email,
+        subject: `Neue Anfrage: ${subject} – ${firstName} ${lastName}`,
+        html: buildNotificationHtml({ firstName, lastName, email, subject, message }),
+      }),
+      // Confirmation to customer
+      transporter.sendMail({
+        from: fromAddress,
+        to: email,
+        subject: "Ihre Anfrage bei Schubert Design – Bestätigung",
+        html: buildConfirmationHtml({ firstName, subject, message }),
+      }),
     ]);
 
-    return res.status(200).json({ success: true, message: "Emails sent successfully" });
+    return res.status(200).json({ success: true });
   } catch (error: any) {
     console.error("SMTP Error:", error);
-    return res.status(500).json({
-      error: "Failed to send emails",
-      details: error.message,
-    });
+    return res.status(500).json({ error: "E-Mail konnte nicht gesendet werden.", details: error.message });
   }
 }

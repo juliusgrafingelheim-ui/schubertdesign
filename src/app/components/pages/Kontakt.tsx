@@ -2,10 +2,50 @@ import { useState } from "react";
 import { Fade } from "../SectionReveal";
 import { serif } from "../Layout";
 import { motion } from "motion/react";
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2 } from "lucide-react";
 
 export function Kontakt() {
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "Badplanung",
+    message: "",
+  });
+
+  const update = (key: string, val: string) => setForm((f) => ({ ...f, [key]: val }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Fehler beim Senden");
+      }
+
+      setDone(true);
+      setForm({ firstName: "", lastName: "", email: "", subject: "Badplanung", message: "" });
+    } catch (err: any) {
+      setError(err.message || "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputClass =
+    "w-full px-4 py-3 bg-white border border-neutral-200 outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100 transition-all";
 
   return (
     <div>
@@ -61,28 +101,32 @@ export function Kontakt() {
                     <CheckCircle size={24} className="text-neutral-900" />
                   </div>
                   <h3 style={{ fontFamily: serif, fontSize: "1.3rem", fontWeight: 400, fontStyle: "italic" }}>Vielen Dank!</h3>
-                  <p className="text-neutral-500 mt-2" style={{ fontSize: "0.9rem" }}>Wir melden uns in Kürze bei Ihnen.</p>
-                  <button onClick={() => setDone(false)} className="mt-6 px-5 py-2 bg-neutral-200 hover:bg-neutral-300 transition-colors" style={{ fontSize: "0.8rem", fontWeight: 600 }}>
+                  <p className="text-neutral-500 mt-2" style={{ fontSize: "0.9rem" }}>
+                    Wir haben Ihnen eine Bestätigung per E-Mail gesendet und melden uns in Kürze.
+                  </p>
+                  <button onClick={() => setDone(false)} className="mt-6 px-5 py-2 bg-neutral-200 hover:bg-neutral-300 transition-colors cursor-pointer" style={{ fontSize: "0.8rem", fontWeight: 600 }}>
                     Neue Nachricht
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={(e) => { e.preventDefault(); setDone(true); }} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {["Vorname", "Nachname"].map((f) => (
-                      <div key={f}>
-                        <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>{f}</label>
-                        <input type="text" required className="w-full px-4 py-3 bg-white border border-neutral-200 outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100 transition-all" style={{ fontSize: "0.9rem" }} />
-                      </div>
-                    ))}
+                    <div>
+                      <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>Vorname *</label>
+                      <input type="text" required value={form.firstName} onChange={(e) => update("firstName", e.target.value)} className={inputClass} style={{ fontSize: "0.9rem" }} />
+                    </div>
+                    <div>
+                      <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>Nachname *</label>
+                      <input type="text" required value={form.lastName} onChange={(e) => update("lastName", e.target.value)} className={inputClass} style={{ fontSize: "0.9rem" }} />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>E-Mail</label>
-                    <input type="email" required className="w-full px-4 py-3 bg-white border border-neutral-200 outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100 transition-all" style={{ fontSize: "0.9rem" }} />
+                    <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>E-Mail *</label>
+                    <input type="email" required value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} style={{ fontSize: "0.9rem" }} />
                   </div>
                   <div>
                     <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>Betreff</label>
-                    <select className="w-full px-4 py-3 bg-white border border-neutral-200 outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100 transition-all text-neutral-700" style={{ fontSize: "0.9rem" }}>
+                    <select value={form.subject} onChange={(e) => update("subject", e.target.value)} className={`${inputClass} text-neutral-700`} style={{ fontSize: "0.9rem" }}>
                       <option>Badplanung</option>
                       <option>Naturstein</option>
                       <option>Fliesen</option>
@@ -92,12 +136,24 @@ export function Kontakt() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>Ihre Nachricht</label>
-                    <textarea rows={5} required className="w-full px-4 py-3 bg-white border border-neutral-200 outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-100 transition-all resize-none" style={{ fontSize: "0.9rem" }} />
+                    <label className="block text-neutral-500 mb-1.5" style={{ fontSize: "0.8rem", fontWeight: 600 }}>Ihre Nachricht *</label>
+                    <textarea rows={5} required value={form.message} onChange={(e) => update("message", e.target.value)} className={`${inputClass} resize-none`} style={{ fontSize: "0.9rem" }} />
                   </div>
-                  <button type="submit" className="flex items-center gap-2 px-7 py-3.5 bg-neutral-900 text-white hover:bg-neutral-700 transition-colors" style={{ fontSize: "0.9rem", fontWeight: 700 }}>
-                    <Send size={15} />
-                    Nachricht senden
+
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3" style={{ fontSize: "0.85rem" }}>
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex items-center gap-2 px-7 py-3.5 bg-neutral-900 text-white hover:bg-neutral-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                    style={{ fontSize: "0.9rem", fontWeight: 700 }}
+                  >
+                    {loading ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+                    {loading ? "Wird gesendet…" : "Nachricht senden"}
                   </button>
                 </form>
               )}
