@@ -161,18 +161,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "Alle Pflichtfelder müssen ausgefüllt sein." });
   }
 
+  const smtpPort = Number(process.env.SMTP_PORT || 587);
+
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: false,
+    port: smtpPort,
+    secure: smtpPort === 465,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
     tls: {
-      ciphers: "SSLv3",
       rejectUnauthorized: false,
+      minVersion: "TLSv1.2",
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 
   const fromAddress = `"Schubert Design" <${process.env.SMTP_USER}>`;
