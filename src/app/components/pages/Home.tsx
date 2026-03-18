@@ -256,7 +256,7 @@ export function Home() {
                 key={p.title}
                 initial={{ opacity: 0, clipPath: "inset(100% 0 0 0)" }}
                 whileInView={{ opacity: 1, clipPath: "inset(0% 0 0 0)" }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "50px" }}
                 transition={{ delay: i * 0.15, duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
               >
                 <Link to="/projekte" className="group relative block">
