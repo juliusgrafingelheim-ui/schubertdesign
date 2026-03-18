@@ -21,9 +21,9 @@ const IMG = {
 
 const SERVICES = [
   { icon: Droplets, title: "Bad & Spa", desc: "Vom Gäste-WC bis zur Penthouse-Suite — modulare Teil-Lösung oder Full Service.", img: IMG.hero },
-  { icon: Layers, title: "Boden & Wand", desc: "Naturstein und Fliesen — Einbau durch eigene Facharbeiter, alles aus einer Hand.", img: IMG.stone },
+  { icon: Layers, title: "Boden & Wand", desc: "Naturstein und Fliesen — Einbau durch eigene Facharbeiter, alles aus einer Hand.", img: `${CDN}61a8a524d596019e1e9f0c8a_Steinboden-Naturstein-Esszimmer%201.png` },
   { icon: Ruler, title: "Treppen", desc: "Pflegeleicht, wertig und wirtschaftlich — im Innen- wie im Außenbereich.", img: IMG.stairs },
-  { icon: BadgeCheck, title: "Fensterbänke", desc: "Marmor, Kalkstein oder Granit — individuell für Sie gefertigt.", img: IMG.showroom },
+  { icon: BadgeCheck, title: "Fensterbänke", desc: "Marmor, Kalkstein oder Granit — individuell für Sie gefertigt.", img: `${CDN}61a8a4f02916641fe408230b_Zach-Export-Masterbad-8%201.png` },
 ];
 
 const PROJECTS = [

@@ -113,7 +113,7 @@ export function Layout() {
         )}
       </AnimatePresence>
 
-      <main className="pt-16"><Outlet /></main>
+      <main className="pt-16 overflow-x-hidden"><Outlet /></main>
 
       {/* ─── FOOTER ─── */}
       <footer className="bg-neutral-950 text-white">
