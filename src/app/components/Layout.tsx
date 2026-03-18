@@ -169,7 +169,6 @@ export function Layout() {
             <div className="flex gap-5">
               <Link to="/datenschutz" className="hover:text-white transition-colors">Datenschutz</Link>
               <Link to="/impressum" className="hover:text-white transition-colors">Impressum</Link>
-              <span className="hover:text-white transition-colors cursor-pointer">AGB</span>
             </div>
           </div>
         </div>
