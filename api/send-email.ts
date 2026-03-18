@@ -144,6 +144,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // Check env vars
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error("Missing SMTP environment variables:", {
+      SMTP_HOST: !!process.env.SMTP_HOST,
+      SMTP_PORT: !!process.env.SMTP_PORT,
+      SMTP_USER: !!process.env.SMTP_USER,
+      SMTP_PASS: !!process.env.SMTP_PASS,
+    });
+    return res.status(500).json({ error: "SMTP ist nicht konfiguriert. Bitte Umgebungsvariablen in Vercel setzen." });
+  }
+
   const { firstName, lastName, email, subject, message } = req.body;
 
   if (!firstName || !lastName || !email || !message) {
