@@ -8,9 +8,9 @@ import { ArrowRight, Droplets, Layers, Ruler, BadgeCheck, Wrench, HardHat, Truck
 const CDN = "https://cdn.prod.website-files.com/618ac216f0fe430bdd7d4310/";
 const IMG = {
   hero: `${CDN}61c33d8c9529ef05031047bb_bad-9_001.jpg`,
-  floor: `${CDN}61bb870c14af694f5a425512_79f28a6b183002dg77cd302e87c2252d.jpg`,
+  floor: `${CDN}61a8a524d596019e1e9f0c8a_Steinboden-Naturstein-Esszimmer%201.png`,
   stairs: `${CDN}61c34585c4d070570bf6d6e4_stein-fliese-1_001.jpg`,
-  stone: `${CDN}61c3551190b9b260e5e738db_manufaktur_001.jpg`,
+  stone: `${CDN}61a8a4f02916641fe408230b_Zach-Export-Masterbad-8%201.png`,
 };
 
 const MAIN = [
